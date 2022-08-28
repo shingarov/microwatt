@@ -46,7 +46,7 @@
 #define DBG_LOG_DATA		0x17
 #define DBG_LOG_TRIGGER		0x18
 
-static bool debug;
+static bool debug = true;
 
 struct backend {
 	int (*init)(const char *target, int freq);
@@ -539,82 +539,12 @@ static void ltrig_set(uint64_t addr)
 	check(dmi_write(DBG_LOG_TRIGGER, (addr & ~(uint64_t)2) | 1), "writing LOG_TRIGGER");
 }
 
-static void usage(const char *cmd)
-{
-	fprintf(stderr, "Usage: %s -b <jtag|ecp5|sim> <command> <args>\n", cmd);
-
-	fprintf(stderr, "\n");
-	fprintf(stderr, " CPU core:\n");
-	fprintf(stderr, "  start\n");
-	fprintf(stderr, "  stop\n");
-	fprintf(stderr, "  step\n");
-	fprintf(stderr, "  creset			core reset\n");
-	fprintf(stderr, "  icreset			icache reset\n");
-
-	fprintf(stderr, "\n");
-	fprintf(stderr, " Memory:\n");
-	fprintf(stderr, "  mr <hex addr> [count]\n");
-	fprintf(stderr, "  mw <hex addr> <hex value>\n");
-	fprintf(stderr, "  load <file> [addr]		If omitted address is 0\n");
-	fprintf(stderr, "  save <file> <addr> <size>\n");
-
-	fprintf(stderr, "\n");
-	fprintf(stderr, " Registers:\n");
-	fprintf(stderr, "  gpr <reg> [count]\n");
-	fprintf(stderr, "  status\n");
-
-	fprintf(stderr, "\n");
-	fprintf(stderr, " Core logging:\n");
-	fprintf(stderr, "  lstart			start logging\n");
-	fprintf(stderr, "  lstop			stop logging\n");
-	fprintf(stderr, "  ldump <file>			dump log to file\n");
-	fprintf(stderr, "  ltrig 			show logging stop trigger status\n");
-	fprintf(stderr, "  ltrig off 			clear logging stop trigger address\n");
-	fprintf(stderr, "  ltrig <addr>			set logging stop trigger address\n");
-
-	fprintf(stderr, "\n");
-	fprintf(stderr, " JTAG:\n");
-	fprintf(stderr, "  dmiread <hex addr>\n");
-	fprintf(stderr, "  dmiwrite <hex addr> <hex value>\n");
-	fprintf(stderr, "  quit\n");
-
-	exit(1);
-}
-
 int main(int argc, char *argv[])
 {
-	const char *target = NULL;
+	const char *target = "DigilentNexysVideo";
 	int rc, i = 1, freq = 0;
 
 	b = &bscane2_backend;
-
-	while(1) {
-		int c, oindex;
-		static struct option lopts[]  = {
-			{ "backend",	required_argument, 0, 'b' },
-			{ "target",	required_argument, 0, 't' },
-			{ "debug",	no_argument,       0, 'd' },
-			{ "frequency",	no_argument,       0, 's' },
-			{ 0, 0, 0, 0 }
-		};
-		c = getopt_long(argc, argv, "dhb:t:s:", lopts, &oindex);
-		if (c < 0)
-			break;
-		switch(c) {
-		case 't':
-			target = optarg;
-			break;
-		case 's':
-			freq = atoi(optarg);
-			if (freq == 0) {
-				fprintf(stderr, "Bad frequency %s\n", optarg);
-				exit(1);
-			}
-			break;
-		case 'd':
-			debug = true;
-		}
-	}
 
 	if (b == NULL)
 		b = &bscane2_backend;
@@ -627,8 +557,6 @@ int main(int argc, char *argv[])
 			uint8_t  addr;
 			uint64_t data;
 
-			if ((i+1) >= argc)
-				usage(argv[0]);
 			addr = strtoul(argv[++i], NULL, 16);
 			dmi_read(addr, &data);
 			printf("%02x: %016llx\n", addr, (unsigned long long)data);
@@ -636,8 +564,6 @@ int main(int argc, char *argv[])
 			uint8_t  addr;
 			uint64_t data;
 
-			if ((i+2) >= argc)
-				usage(argv[0]);
 			addr = strtoul(argv[++i], NULL, 16);
 			data = strtoul(argv[++i], NULL, 16);
 			dmi_write(addr, data);
@@ -658,8 +584,6 @@ int main(int argc, char *argv[])
 		} else if (strcmp(argv[i], "mr") == 0) {
 			uint64_t addr, count = 1;
 
-			if ((i+1) >= argc)
-				usage(argv[0]);
 			addr = strtoul(argv[++i], NULL, 16);
 			if (((i+1) < argc) && isxdigit(argv[i+1][0]))
 				count = strtoul(argv[++i], NULL, 16);
@@ -667,8 +591,6 @@ int main(int argc, char *argv[])
 		} else if (strcmp(argv[i], "mw") == 0) {
 			uint64_t addr, data;
 
-			if ((i+2) >= argc)
-				usage(argv[0]);
 			addr = strtoul(argv[++i], NULL, 16);
 			data = strtoul(argv[++i], NULL, 16);
 			mem_write(addr, data);
@@ -676,8 +598,6 @@ int main(int argc, char *argv[])
 			const char *filename;
 			uint64_t addr = 0;
 
-			if ((i+1) >= argc)
-				usage(argv[0]);
 			filename = argv[++i];
 			if (((i+1) < argc) && isxdigit(argv[i+1][0]))
 				addr = strtoul(argv[++i], NULL, 16);
@@ -686,8 +606,6 @@ int main(int argc, char *argv[])
 			const char *filename;
 			uint64_t addr, size;
 
-			if ((i+3) >= argc)
-				usage(argv[0]);
 			filename = argv[++i];
 			addr = strtoul(argv[++i], NULL, 16);
 			size = strtoul(argv[++i], NULL, 16);
@@ -695,8 +613,6 @@ int main(int argc, char *argv[])
 		} else if (strcmp(argv[i], "gpr") == 0) {
 			uint64_t reg, count = 1;
 
-			if ((i+1) >= argc)
-				usage(argv[0]);
 			reg = strtoul(argv[++i], NULL, 10);
 			if (((i+1) < argc) && isdigit(argv[i+1][0]))
 				count = strtoul(argv[++i], NULL, 10);
@@ -708,8 +624,6 @@ int main(int argc, char *argv[])
 		} else if (strcmp(argv[i], "ldump") == 0) {
 			const char *filename;
 
-			if ((i+1) >= argc)
-				usage(argv[0]);
 			filename = argv[++i];
 			log_dump(filename);
 		} else if (strcmp(argv[i], "ltrig") == 0) {
@@ -725,7 +639,7 @@ int main(int argc, char *argv[])
 			}
 		} else {
 			fprintf(stderr, "Unknown command %s\n", argv[i]);
-			usage(argv[0]);
+	        exit(1);
 		}
 	}
 	core_status();
