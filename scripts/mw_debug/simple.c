@@ -48,12 +48,6 @@
 
 static bool debug = true;
 
-struct backend {
-	int (*init)(const char *target, int freq);
-	int (*command)(uint8_t op, uint8_t addr, uint64_t *data);
-};
-static struct backend *b;
-
 static void check(int r, const char *failstr)
 {
 	if (r >= 0)
@@ -219,20 +213,15 @@ static int jtag_command(uint8_t op, uint8_t addr, uint64_t *data)
 	return rc;
 }
 
-static struct backend bscane2_backend = {
-	.init	= bscane2_init,
-	.command = jtag_command,
-};
-
 static int dmi_read(uint8_t addr, uint64_t *data)
 {
 	int rc;
 
-	rc = b->command(1, addr, data);
+	rc = jtag_command(1, addr, data);
 	if (rc < 0)
 		return rc;
 	for (;;) {
-		rc = b->command(0, 0, data);
+		rc = jtag_command(0, 0, data);
 		if (rc < 0)
 			return rc;
 		if (rc == 0)
@@ -246,11 +235,11 @@ static int dmi_write(uint8_t addr, uint64_t data)
 {
 	int rc;
 
-	rc = b->command(2, addr, &data);
+	rc = jtag_command(2, addr, &data);
 	if (rc < 0)
 		return rc;
 	for (;;) {
-		rc = b->command(0, 0, NULL);
+		rc = jtag_command(0, 0, NULL);
 		if (rc < 0)
 			return rc;
 		if (rc == 0)
@@ -544,12 +533,9 @@ int main(int argc, char *argv[])
 	const char *target = "DigilentNexysVideo";
 	int rc, i = 1, freq = 0;
 
-	b = &bscane2_backend;
+	//b = &bscane2_backend;
 
-	if (b == NULL)
-		b = &bscane2_backend;
-
-	rc = b->init(target, freq);
+	rc = bscane2_init(target, freq);
 	if (rc < 0)
 		exit(1);
 	for (i = optind; i < argc; i++) {
