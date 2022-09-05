@@ -120,7 +120,7 @@ static int common_jtag_init(const char *target, int freq)
 	return 0;
 }
 
-static int bscane2_init(const char *target, int freq)
+int bscane2_init(const char *target, int freq)
 {
 	urj_part_t *p;
 	uint32_t id;
@@ -179,7 +179,7 @@ static int bscane2_init(const char *target, int freq)
 	return 0;
 }
 
-static int jtag_command(uint8_t op, uint8_t addr, uint64_t *data)
+int jtag_command(uint8_t op, uint8_t addr, uint64_t *data)
 {
 	urj_part_t *p = urj_tap_chain_active_part(jc);
 	urj_part_instruction_t *insn;
@@ -213,7 +213,7 @@ static int jtag_command(uint8_t op, uint8_t addr, uint64_t *data)
 	return rc;
 }
 
-static int dmi_read(uint8_t addr, uint64_t *data)
+int dmi_read(uint8_t addr, uint64_t *data)
 {
 	int rc;
 
@@ -231,7 +231,7 @@ static int dmi_read(uint8_t addr, uint64_t *data)
 	}
 }
 
-static int dmi_write(uint8_t addr, uint64_t data)
+int dmi_write(uint8_t addr, uint64_t data)
 {
 	int rc;
 
@@ -249,7 +249,7 @@ static int dmi_write(uint8_t addr, uint64_t data)
 	}
 }
 
-static void core_status(void)
+void core_status(void)
 {
 	uint64_t stat, nia, msr;
 	const char *statstr, *statstr2;
@@ -279,22 +279,22 @@ static void core_status(void)
 	printf(" MSR: %016" PRIx64 "\n", msr);
 }
 
-static void core_stop(void)
+void core_stop(void)
 {
 	check(dmi_write(DBG_CORE_CTRL, DBG_CORE_CTRL_STOP), "stopping core");
 }
 
-static void core_start(void)
+void core_start(void)
 {
 	check(dmi_write(DBG_CORE_CTRL, DBG_CORE_CTRL_START), "starting core");
 }
 
-static void core_reset(void)
+void core_reset(void)
 {
 	check(dmi_write(DBG_CORE_CTRL, DBG_CORE_CTRL_RESET), "resetting core");
 }
 
-static void core_step(void)
+void core_step(void)
 {
 	uint64_t stat;
 
@@ -307,19 +307,19 @@ static void core_step(void)
 	check(dmi_write(DBG_CORE_CTRL, DBG_CORE_CTRL_STEP), "stepping core");
 }
 
-static void icache_reset(void)
+void icache_reset(void)
 {
 	check(dmi_write(DBG_CORE_CTRL, DBG_CORE_CTRL_ICRESET), "resetting icache");
 }
 
-static const char *fast_spr_names[] =
+const char *fast_spr_names[] =
 {
 	"lr", "ctr", "srr0", "srr1", "hsrr0", "hsrr1",
 	"sprg0", "sprg1", "sprg2", "sprg3",
 	"hsprg0", "hsprg1", "xer"
 };
 
-static void gpr_read(uint64_t reg, uint64_t count)
+void gpr_read(uint64_t reg, uint64_t count)
 {
 	uint64_t data;
 
@@ -342,7 +342,7 @@ static void gpr_read(uint64_t reg, uint64_t count)
 	}
 }
 
-static void mem_read(uint64_t addr, uint64_t count)
+void mem_read(uint64_t addr, uint64_t count)
 {
 	union {
 		uint64_t data;
@@ -370,14 +370,14 @@ static void mem_read(uint64_t addr, uint64_t count)
 	}
 }
 
-static void mem_write(uint64_t addr, uint64_t data)
+void mem_write(uint64_t addr, uint64_t data)
 {
 	check(dmi_write(DBG_WB_CTRL, 0x7ff), "writing WB_CTRL");
 	check(dmi_write(DBG_WB_ADDR, addr), "writing WB_ADDR");
 	check(dmi_write(DBG_WB_DATA, data), "writing WB_DATA");
 }
 
-static void load(const char *filename, uint64_t addr)
+void load(const char *filename, uint64_t addr)
 {
 	uint64_t data;
 	int fd, rc, count;
@@ -407,7 +407,7 @@ static void load(const char *filename, uint64_t addr)
 	printf("%x done.\n", count);
 }
 
-static void save(const char *filename, uint64_t addr, uint64_t size)
+void save(const char *filename, uint64_t addr, uint64_t size)
 {
 	uint64_t data;
 	int fd, rc, count;
@@ -441,12 +441,12 @@ static void save(const char *filename, uint64_t addr, uint64_t size)
 
 #define LOG_STOP	0x80000000ull
 
-static void log_start(void)
+void log_start(void)
 {
 	check(dmi_write(DBG_LOG_ADDR, 0), "writing LOG_ADDR");
 }
 
-static void log_stop(void)
+void log_stop(void)
 {
 	uint64_t lsize, laddr, waddr;
 
@@ -461,7 +461,7 @@ static void log_stop(void)
 	printf("write ptr = %" PRIx64 "\n", waddr);
 }
 
-static void log_dump(const char *filename)
+void log_dump(const char *filename)
 {
 	FILE *f;
 	uint64_t lsize, laddr, waddr;
@@ -506,7 +506,7 @@ static void log_dump(const char *filename)
 	check(dmi_write(DBG_LOG_ADDR, orig_laddr), "writing LOG_ADDR");
 }
 
-static void ltrig_show(void)
+void ltrig_show(void)
 {
 	uint64_t trig;
 
@@ -518,22 +518,20 @@ static void ltrig_show(void)
 	printf(", %striggered\n", (trig & 2? "": "not "));
 }
 
-static void ltrig_off(void)
+void ltrig_off(void)
 {
 	check(dmi_write(DBG_LOG_TRIGGER, 0), "writing LOG_TRIGGER");
 }
 
-static void ltrig_set(uint64_t addr)
+void ltrig_set(uint64_t addr)
 {
 	check(dmi_write(DBG_LOG_TRIGGER, (addr & ~(uint64_t)2) | 1), "writing LOG_TRIGGER");
 }
 
-int main(int argc, char *argv[])
+int maina(int argc, char *argv[])
 {
 	const char *target = "DigilentNexysVideo";
 	int rc, i = 1, freq = 0;
-
-	//b = &bscane2_backend;
 
 	rc = bscane2_init(target, freq);
 	if (rc < 0)
