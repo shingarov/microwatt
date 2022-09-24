@@ -287,7 +287,7 @@ uint64_t main(void)
 	printf("\n");
 	if (ftr & SYS_REG_INFO_HAS_DRAM) {
 		printf("LiteDRAM built from LiteX %s\n", LITEX_GIT_SHA1);
-		sdram_init();
+		sdrinit();
 	}
 	if (ftr & SYS_REG_INFO_HAS_BRAM) {
 		printf("Booting from BRAM...\n");

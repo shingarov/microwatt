@@ -1,0 +1,26 @@
+diff --git a/litex/gen/fhdl/verilog.py b/litex/gen/fhdl/verilog.py
+index 98a73270..9a158147 100644
+--- a/litex/gen/fhdl/verilog.py
++++ b/litex/gen/fhdl/verilog.py
+@@ -143,7 +143,7 @@ def _printnode(ns, at, level, node, target_filter=None):
+         else:
+             assignment = " <= "
+         return "\t"*level + _printexpr(ns, node.l)[0] + assignment + _printexpr(ns, node.r)[0] + ";\n"
+-    elif isinstance(node, collections.Iterable):
++    elif isinstance(node, collections.abc.Iterable):
+         return "".join(_printnode(ns, at, level, n, target_filter) for n in node)
+     elif isinstance(node, If):
+         r = "\t"*level + "if (" + _printexpr(ns, node.cond)[0] + ") begin\n"
+diff --git a/litex/soc/software/liblitedram/sdram.c b/litex/soc/software/liblitedram/sdram.c
+index 0970a4c9..6797dd11 100644
+--- a/litex/soc/software/liblitedram/sdram.c
++++ b/litex/soc/software/liblitedram/sdram.c
+@@ -788,7 +788,7 @@ int sdrlevel(void)
+ 
+ int sdrinit(void)
+ {
+-	printf("Initializing DRAM @0x%08x...\n", MAIN_RAM_BASE);
++	printf("Initializing DRAM @0x%08lx...\n", MAIN_RAM_BASE);
+ 
+ #ifdef CSR_DDRCTRL_BASE
+ 	ddrctrl_init_done_write(0);
