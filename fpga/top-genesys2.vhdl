@@ -21,6 +21,7 @@ entity toplevel is
         SPI_FLASH_DEF_CKDV : natural := 1;
         SPI_FLASH_DEF_QUAD : boolean := true;
         LOG_LENGTH         : natural := 2048;
+        USE_LITEETH        : boolean := true;
         UART_IS_16550      : boolean := true
 	);
     port(
@@ -44,6 +45,18 @@ entity toplevel is
         spi_flash_miso   : inout std_ulogic;
         spi_flash_wp_n   : inout std_ulogic;
         spi_flash_hold_n : inout std_ulogic;
+
+        -- Ethernet
+        eth_clocks_tx    : out std_ulogic;
+        eth_clocks_rx    : in std_ulogic;
+        eth_rst_n        : out std_ulogic;
+        eth_int_n        : in std_ulogic;
+        eth_mdio         : inout std_ulogic;
+        eth_mdc          : out std_ulogic;
+        eth_rx_ctl       : in std_ulogic;
+        eth_rx_data      : in std_ulogic_vector(3 downto 0);
+        eth_tx_ctl       : out std_ulogic;
+        eth_tx_data      : out std_ulogic_vector(3 downto 0);
 
 	-- DRAM wires
 	ddram_a       : out std_logic_vector(14 downto 0);
@@ -86,6 +99,12 @@ architecture behaviour of toplevel is
     signal wb_ext_io_out       : wb_io_slave_out;
     signal wb_ext_is_dram_csr  : std_ulogic;
     signal wb_ext_is_dram_init : std_ulogic;
+
+    signal wb_ext_is_eth       : std_ulogic;
+
+    -- LiteEth connection
+    signal ext_irq_eth         : std_ulogic;
+    signal wb_eth_out          : wb_io_slave_out := wb_io_slave_out_init;
 
     -- Control/status
     signal core_alt_reset : std_ulogic;
@@ -141,6 +160,7 @@ begin
             SPI_FLASH_DEF_CKDV => SPI_FLASH_DEF_CKDV,
             SPI_FLASH_DEF_QUAD => SPI_FLASH_DEF_QUAD,
             LOG_LENGTH         => LOG_LENGTH,
+            HAS_LITEETH        => USE_LITEETH,
             UART0_IS_16550     => UART_IS_16550
 	    )
 	port map (
@@ -152,6 +172,9 @@ begin
             uart0_txd         => uart_main_tx,
 	    uart0_rxd         => uart_main_rx,
 
+            -- External interrupts
+            ext_irq_eth       => ext_irq_eth,
+
             -- SPI signals
             spi_flash_sck     => spi_sck,
             spi_flash_cs_n    => spi_cs_n,
@@ -159,13 +182,14 @@ begin
             spi_flash_sdat_oe => spi_sdat_oe,
             spi_flash_sdat_i  => spi_sdat_i,
 
-            -- DRAM wishbone
+            -- wishbone
 	    wb_dram_in          => wb_dram_in,
 	    wb_dram_out         => wb_dram_out,
 	    wb_ext_io_in        => wb_ext_io_in,
 	    wb_ext_io_out       => wb_ext_io_out,
 	    wb_ext_is_dram_csr  => wb_ext_is_dram_csr,
 	    wb_ext_is_dram_init => wb_ext_is_dram_init,
+	    wb_ext_is_eth       => wb_ext_is_eth,
 	    alt_reset           => core_alt_reset
 	    );
 
@@ -327,4 +351,82 @@ begin
 	led2 <= not dram_init_done or dram_init_error;
 	led3 <= not dram_init_error; -- Make it blink ?
     end generate;
+
+    has_liteeth : if USE_LITEETH generate
+
+        component liteeth_core port (
+            sys_clock           : in std_ulogic;
+            sys_reset           : in std_ulogic;
+            rgmii_eth_clocks_tx : out std_ulogic;
+            rgmii_eth_clocks_rx : in std_ulogic;
+            rgmii_eth_rst_n     : out std_ulogic;
+            rgmii_eth_int_n     : in std_ulogic;
+            rgmii_eth_mdio      : inout std_ulogic;
+            rgmii_eth_mdc       : out std_ulogic;
+            rgmii_eth_rx_ctl    : in std_ulogic;
+            rgmii_eth_rx_data   : in std_ulogic_vector(3 downto 0);
+            rgmii_eth_tx_ctl    : out std_ulogic;
+            rgmii_eth_tx_data   : out std_ulogic_vector(3 downto 0);
+            wishbone_adr        : in std_ulogic_vector(29 downto 0);
+            wishbone_dat_w      : in std_ulogic_vector(31 downto 0);
+            wishbone_dat_r      : out std_ulogic_vector(31 downto 0);
+            wishbone_sel        : in std_ulogic_vector(3 downto 0);
+            wishbone_cyc        : in std_ulogic;
+            wishbone_stb        : in std_ulogic;
+            wishbone_ack        : out std_ulogic;
+            wishbone_we         : in std_ulogic;
+            wishbone_cti        : in std_ulogic_vector(2 downto 0);
+            wishbone_bte        : in std_ulogic_vector(1 downto 0);
+            wishbone_err        : out std_ulogic;
+            interrupt           : out std_ulogic
+            );
+        end component;
+
+        signal wb_eth_cyc     : std_ulogic;
+        signal wb_eth_adr     : std_ulogic_vector(29 downto 0);
+
+    begin
+        liteeth :  liteeth_core
+            port map(
+                sys_clock           => system_clk,
+                sys_reset           => soc_rst,
+                rgmii_eth_clocks_tx => eth_clocks_tx,
+                rgmii_eth_clocks_rx => eth_clocks_rx,
+                rgmii_eth_rst_n     => eth_rst_n,
+                rgmii_eth_int_n     => eth_int_n,
+                rgmii_eth_mdio      => eth_mdio,
+                rgmii_eth_mdc       => eth_mdc,
+                rgmii_eth_rx_ctl    => eth_rx_ctl,
+                rgmii_eth_rx_data   => eth_rx_data,
+                rgmii_eth_tx_ctl    => eth_tx_ctl,
+                rgmii_eth_tx_data   => eth_tx_data,
+                wishbone_adr        => wb_eth_adr,
+                wishbone_dat_w      => wb_ext_io_in.dat,
+                wishbone_dat_r      => wb_eth_out.dat,
+                wishbone_sel        => wb_ext_io_in.sel,
+                wishbone_cyc        => wb_eth_cyc,
+                wishbone_stb        => wb_ext_io_in.stb,
+                wishbone_ack        => wb_eth_out.ack,
+                wishbone_we         => wb_ext_io_in.we,
+                wishbone_cti        => "000",
+                wishbone_bte        => "00",
+                wishbone_err        => open,
+                interrupt           => ext_irq_eth
+                );
+
+        -- Gate cyc with "chip select" from soc
+        wb_eth_cyc <= wb_ext_io_in.cyc and wb_ext_is_eth;
+
+        -- Remove top address bits as liteeth decoder doesn't know about them
+        wb_eth_adr <= x"000" & "000" & wb_ext_io_in.adr(14 downto 0);
+
+        -- LiteETH isn't pipelined
+        wb_eth_out.stall <= not wb_eth_out.ack;
+
+    end generate;
+
+    no_liteeth : if not USE_LITEETH generate
+        ext_irq_eth    <= '0';
+    end generate;
+
 end architecture behaviour;
