@@ -6,7 +6,7 @@ set_property -dict { PACKAGE_PIN AD12  IOSTANDARD LVDS     } [get_ports { clk200
 create_clock -period 5.000 -name tc_clk100_p [get_ports clk200_p]
 create_clock -period 5.000 -name tc_clk100_n [get_ports clk200_n]
 
-set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { ext_rst }]
+set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { ext_rst_n }]
 
 ## UART
 set_property -dict { PACKAGE_PIN Y20   IOSTANDARD LVCMOS33 } [get_ports { uart_main_rx }]
@@ -17,6 +17,10 @@ set_property -dict { PACKAGE_PIN T28   IOSTANDARD LVCMOS33 } [get_ports { led0 }
 set_property -dict { PACKAGE_PIN V19   IOSTANDARD LVCMOS33 } [get_ports { led1 }]
 set_property -dict { PACKAGE_PIN U30   IOSTANDARD LVCMOS33 } [get_ports { led2 }]
 set_property -dict { PACKAGE_PIN U29   IOSTANDARD LVCMOS33 } [get_ports { led3 }]
+set_property -dict { PACKAGE_PIN V20   IOSTANDARD LVCMOS33 } [get_ports { led4 }]
+set_property -dict { PACKAGE_PIN V26   IOSTANDARD LVCMOS33 } [get_ports { led5 }]
+set_property -dict { PACKAGE_PIN W24   IOSTANDARD LVCMOS33 } [get_ports { led6 }]
+set_property -dict { PACKAGE_PIN W23   IOSTANDARD LVCMOS33 } [get_ports { led7 }]
 
 ## QSPI
 set_property -dict { PACKAGE_PIN U19   IOSTANDARD LVCMOS33 } [get_ports { spi_flash_cs_n   }]
@@ -44,6 +48,16 @@ set_property -dict { PACKAGE_PIN AK11  IOSTANDARD LVCMOS15 } [get_ports { eth_tx
 set_property -dict { PACKAGE_PIN AJ11  IOSTANDARD LVCMOS15 } [get_ports { eth_tx_data[2] }]
 set_property -dict { PACKAGE_PIN AK10  IOSTANDARD LVCMOS15 } [get_ports { eth_tx_data[3] }]
 set_property -dict { PACKAGE_PIN AK14  IOSTANDARD LVCMOS15 } [get_ports { eth_tx_ctl }]
+
+## SD Card
+#set_property -dict { PACKAGE_PIN P28   IOSTANDARD LVCMOS33 } [get_ports { sd_cd }]; #IO_L8N_T1_D12_14 Sch=sd_cd
+#set_property -dict { PACKAGE_PIN R29   IOSTANDARD LVCMOS33 } [get_ports { sd_cmd }]; #IO_L7N_T1_D10_14 Sch=sd_cmd
+#set_property -dict { PACKAGE_PIN R26   IOSTANDARD LVCMOS33 } [get_ports { sd_d[0] }]; #IO_L10N_T1_D15_14 Sch=sd_dat[0]
+#set_property -dict { PACKAGE_PIN R30   IOSTANDARD LVCMOS33 } [get_ports { sd_d[1] }]; #IO_L9P_T1_DQS_14 Sch=sd_dat[1]
+#set_property -dict { PACKAGE_PIN P29   IOSTANDARD LVCMOS33 } [get_ports { sd_d[2] }]; #IO_L7P_T1_D09_14 Sch=sd_dat[2]
+#set_property -dict { PACKAGE_PIN T30   IOSTANDARD LVCMOS33 } [get_ports { sd_d[3] }]; #IO_L9N_T1_DQS_D13_14 Sch=sd_dat[3]
+set_property -dict { PACKAGE_PIN AE24  IOSTANDARD LVCMOS33 } [get_ports { sdcard_reset }]; #IO_L12N_T1_MRCC_12 Sch=sd_reset
+set_property -dict { PACKAGE_PIN R28   IOSTANDARD LVCMOS33 } [get_ports { sdcard_clk }]; #IO_L11P_T1_SRCC_14 Sch=sd_sclk
 
 ## DRAM
 

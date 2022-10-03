@@ -29,7 +29,8 @@ entity toplevel is
 	);
     port(
 	ext_clk   : in  std_ulogic;
-        ext_rst_n   : in  std_ulogic;
+
+        ext_rst_n  : in  std_ulogic;
 
 	-- UART0 signals:
 	uart_main_tx : out std_ulogic;
@@ -96,6 +97,7 @@ architecture behaviour of toplevel is
     signal pll_rst : std_ulogic;
 
     -- Internal clock signals:
+
     signal system_clk        : std_ulogic;
     signal system_clk_locked : std_ulogic;
 
