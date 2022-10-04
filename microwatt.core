@@ -189,6 +189,7 @@ targets:
       - spi_flash_offset=12582912
       - log_length=2048
       - uart_is_16550
+      - has_fpu
     generate: [git_hash]
     tools:
       vivado: {part : xc7k325tffg900-2}
@@ -223,6 +224,7 @@ targets:
       - spi_flash_offset=12582912
       - log_length=2048
       - uart_is_16550
+      - has_fpu
     generate: [litedram_genesys2, git_hash]
     tools:
       vivado: {part : xc7k325tffg900-2}
