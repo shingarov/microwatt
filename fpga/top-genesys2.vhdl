@@ -26,7 +26,7 @@ entity toplevel is
     port(
 	clk200_p   : in  std_ulogic;
 	clk200_n   : in  std_ulogic;
-	ext_rst    : in  std_ulogic;
+	ext_rst_n  : in  std_ulogic;
 
 	-- UART0 signals:
 	uart_main_tx : out std_ulogic;
@@ -213,7 +213,7 @@ begin
 		ext_clk => ext_clk,
 		pll_clk => system_clk,
 		pll_locked_in => system_clk_locked,
-		ext_rst_in => ext_rst,
+		ext_rst_in => ext_rst_n,
 		pll_rst_out => pll_rst,
 		rst_out => soc_rst
 		);
@@ -269,7 +269,7 @@ begin
 		ext_clk => ext_clk,
 		pll_clk => system_clk,
 		pll_locked_in => '1',
-		ext_rst_in => ext_rst,
+		ext_rst_in => ext_rst_n,
 		pll_rst_out => pll_rst,
 		rst_out => open
 		);
