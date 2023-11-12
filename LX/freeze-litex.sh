@@ -32,8 +32,12 @@ git reset --hard FETCH_HEAD
 python3 setup.py install --user
 cd ..
 
-# liteeth
-# 792013a1756ea50608726ee86989ec38cfc35a8b
+git clone --depth=1 https://github.com/enjoy-digital/liteeth.git
+cd liteeth
+git fetch --depth=1 origin 792013a1756ea50608726ee86989ec38cfc35a8b
+git reset --hard FETCH_HEAD
+python3 setup.py install --user
+cd ..
 
 # nmigen d964ba9cc45490b141c8c4c4c3d8add1a26a739d
 
