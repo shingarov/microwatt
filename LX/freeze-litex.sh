@@ -3,6 +3,13 @@
 # Get LiteX at the SHA at which DRAM worked.
 
 rm -rf migen
+rm -rf litex
+rm -rf litex-boards
+rm -rf liteiclink
+rm -rf litescope
+rm -rf liteeth
+rm -rf litedram
+
 git clone https://github.com/m-labs/migen.git
 cd migen
 git checkout 7bc4eb1387b39159a74c1dbd1b820728e0bfbbaa
@@ -12,7 +19,6 @@ python3 setup.py install --user
 cd ..
 
 
-rm -rf litex
 git clone  git@github.com:shingarov/litex.git
 cd litex
 #git checkout amended-31afe  # failed to compile sdram.c with old litedram
@@ -21,7 +27,6 @@ python3 setup.py install --user
 cd ..
 
 
-rm -rf litedram
 git clone https://github.com/enjoy-digital/litedram.git
 cd litedram
 git checkout 26e45d1
@@ -53,7 +58,6 @@ python3 setup.py install --user
 cd ..
 
 
-rm -rf liteeth
 git clone https://github.com/enjoy-digital/liteeth.git
 cd liteeth
 git checkout 792013a1756ea50608726ee86989ec38cfc35a8b
