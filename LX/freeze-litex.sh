@@ -13,7 +13,7 @@ cd ..
 
 
 rm -rf litex
-git clone  https://github.com/shingarov/litex.git
+git clone  git@github.com:shingarov/litex.git
 cd litex
 git checkout eth-μW-genesys2
 python3 setup.py install --user
@@ -21,10 +21,9 @@ cd ..
 
 
 rm -rf litedram
-git clone --depth=1 https://github.com/enjoy-digital/litedram.git
+git clone https://github.com/enjoy-digital/litedram.git
 cd litedram
-git fetch --depth=1 origin 47a0d5fb9e552baa880afab57903a5966d1ee8a7
-git reset --hard FETCH_HEAD
+git checkout 47a0d5fb9e552baa880afab57903a5966d1ee8a7
 python3 setup.py install --user
 cd ..
 
