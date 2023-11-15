@@ -15,8 +15,8 @@ cd ..
 rm -rf litex
 git clone  git@github.com:shingarov/litex.git
 cd litex
-#git checkout amended-31afe  # fails to compile sdram.c
-git checkout amended-9a4c5
+#git checkout amended-31afe  # failed to compile sdram.c with old litedram
+git checkout amended-e3bb3  # works fine with litedram e3b86fe
 python3 setup.py install --user
 cd ..
 
@@ -24,7 +24,7 @@ cd ..
 rm -rf litedram
 git clone https://github.com/enjoy-digital/litedram.git
 cd litedram
-git checkout 47a0d5fb9e552baa880afab57903a5966d1ee8a7
+git checkout e3b86fe
 python3 setup.py install --user
 cd ..
 
