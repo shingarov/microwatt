@@ -24,7 +24,7 @@ cd ..
 rm -rf litedram
 git clone https://github.com/enjoy-digital/litedram.git
 cd litedram
-git checkout e3b86fe
+git checkout 26e45d1
 python3 setup.py install --user
 cd ..
 
