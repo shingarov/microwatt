@@ -15,7 +15,8 @@ cd ..
 rm -rf litex
 git clone  git@github.com:shingarov/litex.git
 cd litex
-git checkout eth-μW-genesys2
+#git checkout amended-31afe  # fails to compile sdram.c
+git checkout amended-9a4c5
 python3 setup.py install --user
 cd ..
 
