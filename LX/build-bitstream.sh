@@ -25,4 +25,16 @@ read N
 T=${targets[$N]}
 echo Ok, building $T
 fusesoc run --build --target=$T  microwatt --no_bram --memory_size=0
+status=$?
+if [[ $status -ne 0 ]]; then
+        echo Synthesis failed.
+        exit 1
+fi
+cd ..
+
+echo 'Flash the bitstream [y/N]?'
+read F
+if [ $F == "y" ]; then
+    microwatt/openocd/flash-arty -f k325 -c genesys2  mw/build/microwatt_0/genesys2-vivado/microwatt_0.bit
+fi
 
