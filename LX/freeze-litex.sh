@@ -21,14 +21,14 @@ cd ..
 
 git clone  git@github.com:shingarov/litex.git
 cd litex
-git checkout amended-31afe  # works fine with litedram 8525a27
+git checkout amended-168c53
 python3 setup.py install --user
 cd ..
 
 
 git clone https://github.com/enjoy-digital/litedram.git
 cd litedram
-git checkout 8525a27
+git checkout 103072c
 python3 setup.py install --user
 cd ..
 
