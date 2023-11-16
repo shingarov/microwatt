@@ -21,7 +21,7 @@ cd ..
 
 git clone  git@github.com:shingarov/litex.git
 cd litex
-git checkout amended-168c53
+git checkout amended-3ce74f6e
 python3 setup.py install --user
 cd ..
 
