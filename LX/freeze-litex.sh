@@ -63,3 +63,5 @@ git checkout 792013a1756ea50608726ee86989ec38cfc35a8b
 python3 setup.py install --user
 cd ..
 
+echo "Now let's generate lx cores."
+
