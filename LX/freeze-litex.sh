@@ -21,7 +21,7 @@ cd ..
 
 git clone  git@github.com:shingarov/litex.git
 cd litex
-git checkout amended-3ce74f6e
+git checkout c19c343 # next commit c6fb9 breaks write leveling
 python3 setup.py install --user
 cd ..
 
