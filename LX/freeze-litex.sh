@@ -61,7 +61,7 @@ cd ..
 
 git clone https://github.com/enjoy-digital/liteeth.git
 cd liteeth
-git checkout 792013a1756ea50608726ee86989ec38cfc35a8b
+git checkout 0c003c
 python3 setup.py install --user
 cd ..
 
