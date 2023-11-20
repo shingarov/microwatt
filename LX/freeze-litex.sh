@@ -21,7 +21,9 @@ cd ..
 
 git clone  git@github.com:shingarov/litex.git
 cd litex
-git checkout c19c343 # next commit c6fb9 breaks write leveling
+git checkout fb05fbc # c19c343 right after this breaks C (#1842),
+                     # and c6fb9 next breaks write leveling
+git cherry-pick 19e7b53 # lx length modifier, so that C compiles
 python3 setup.py install --user
 cd ..
 
