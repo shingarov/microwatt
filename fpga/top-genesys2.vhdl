@@ -13,7 +13,7 @@ entity toplevel is
 	MEMORY_SIZE   : integer := 16384;
 	RAM_INIT_FILE : string   := "firmware.hex";
 	RESET_LOW     : boolean  := true;
-	CLK_FREQUENCY : positive := 100000000;
+	CLK_FREQUENCY : positive := 125000000;
 	USE_LITEDRAM  : boolean  := false;
 	NO_BRAM       : boolean  := false;
 	DISABLE_FLATTEN_CORE : boolean := false;
@@ -255,9 +255,7 @@ begin
 	signal dram_sys_rst    : std_ulogic;
     begin
 
-	-- Eventually dig out the frequency from the generator
-	-- but for now, assert it's 100Mhz
-	assert CLK_FREQUENCY = 100000000;
+	assert CLK_FREQUENCY = 125000000;
 
 	reset_controller: entity work.soc_reset
 	    generic map(
