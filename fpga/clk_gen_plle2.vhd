@@ -48,6 +48,12 @@ architecture rtl of clock_generator is
                         clkout_divide => 16,
                         divclk_divide => 1,
                         force_rst     => '0');
+            when 125000000 =>
+                return (clkin_period  => 5.0,
+                        clkfbout_mult => 5,
+                        clkout_divide => 8,
+                        divclk_divide => 1,
+                        force_rst     => '0');
             when others =>
                 report "Unsupported output frequency" severity failure;
                 return bad_settings;
