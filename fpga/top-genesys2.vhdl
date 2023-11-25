@@ -385,7 +385,7 @@ begin
     begin
         liteeth :  liteeth_core
             port map(
-                sys_clock           => ext_clk,
+                sys_clock           => system_clk,
                 sys_reset           => soc_rst,
                 rgmii_eth_clocks_tx => eth_clocks_tx,
                 rgmii_eth_clocks_rx => eth_clocks_rx,
