@@ -3,8 +3,8 @@
 ## Clock & Reset
 set_property -dict { PACKAGE_PIN AD11  IOSTANDARD LVDS     } [get_ports { clk200_n }]
 set_property -dict { PACKAGE_PIN AD12  IOSTANDARD LVDS     } [get_ports { clk200_p }]
-create_clock -period 5.000 -name tc_clk100_p [get_ports clk200_p]
-create_clock -period 5.000 -name tc_clk100_n [get_ports clk200_n]
+create_clock -period 5.000 -name clk200_p [get_ports clk200_p]
+create_clock -period 5.000 -name clk200_n [get_ports clk200_n]
 
 set_property -dict { PACKAGE_PIN R19   IOSTANDARD LVCMOS33 } [get_ports { ext_rst_n }]
 
