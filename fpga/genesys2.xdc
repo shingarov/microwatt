@@ -45,6 +45,14 @@ set_property -dict { PACKAGE_PIN AJ11  IOSTANDARD LVCMOS15 } [get_ports { eth_tx
 set_property -dict { PACKAGE_PIN AK10  IOSTANDARD LVCMOS15 } [get_ports { eth_tx_data[3] }]
 set_property -dict { PACKAGE_PIN AK14  IOSTANDARD LVCMOS15 } [get_ports { eth_tx_ctl }]
 
+create_clock -name eth_rx_clk -period 8.0 [get_nets eth_clocks_rx]
+create_clock -name eth_tx_clk -period 8.0 [get_nets eth_clocks_tx]
+
+set_clock_groups -group [get_clocks -include_generated_clocks -of [get_nets system_clk]] -group [get_clocks -include_generated_clocks -of [get_nets eth_clocks_rx]] -asynchronous
+set_clock_groups -group [get_clocks -include_generated_clocks -of [get_nets system_clk]] -group [get_clocks -include_generated_clocks -of [get_nets eth_clocks_tx]] -asynchronous
+set_clock_groups -group [get_clocks -include_generated_clocks -of [get_nets eth_clocks_rx]] -group [get_clocks -include_generated_clocks -of [get_nets eth_clocks_tx]] -asynchronous
+
+
 ## DRAM
 
 # ddram:0.a
