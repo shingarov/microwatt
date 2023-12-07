@@ -5,7 +5,7 @@ OBJ = $(BUILD_DIR)/obj
 LXINC_DIR=$(LXSRC_DIR)/include
 
 PROGRAM = sdram_init
-OBJECTS = $(OBJ)/head.o $(OBJ)/main.o $(OBJ)/sdram.o $(OBJ)/memtest.o $(OBJ)/console.o
+OBJECTS = $(OBJ)/head.o $(OBJ)/main.o $(OBJ)/sdram.o $(OBJ)/memtest.o $(OBJ)/console.o $(OBJ)/accessors.o
 
 #### Compiler
 
@@ -57,6 +57,8 @@ endif
 all: objdir $(OBJ)/$(PROGRAM).hex
 
 $(OBJ)/sdram.o: $(LXSRC_DIR)/liblitedram/sdram.c
+	$(call Q,CC, $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@, $@)
+$(OBJ)/accessors.o: $(LXSRC_DIR)/liblitedram/accessors.c
 	$(call Q,CC, $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@, $@)
 $(OBJ)/memtest.o: $(LXSRC_DIR)/libbase/memtest.c
 	$(call Q,CC, $(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@, $@)
